@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllXGaming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #0f0f1a;
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1c1c2b 0%, #0f0f1a 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .brand-container {
+            text-align: center;
+            perspective: 800px;
+        }
+
+        .brand-name span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(30px, 8vw, 100px);
+            font-weight: 700;
+            color: #00e5ff;
+            text-shadow:
+                0 0 5px rgba(0, 229, 255, 0.95),
+                0 0 10px rgba(0, 229, 255, 0.9),
+                0 0 20px rgba(0, 229, 255, 0.7),
+                0 0 35px rgba(0, 170, 204, 0.5),
+                0 0 60px rgba(0, 120, 150, 0.3);
+            opacity: 0;
+            transform: translateY(40px) scale(0.7) rotateX(-60deg);
+            transform-origin: bottom center;
+            display: inline-block;
+            animation: letterReveal 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+        }
+
+        @keyframes letterReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.7) rotateX(-60deg);
+            }
+            60% {
+                transform: translateY(-10px) scale(1.05) rotateX(15deg);
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotateX(0deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-screen" id="splashScreen">
+        <div class="brand-container">
+            <div class="brand-name" aria-label="AllXGaming">
+                <!-- Letters will be added by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const brandNameContainer = document.querySelector('.brand-name');
+            const splashScreen = document.getElementById('splashScreen');
+            const brandText = "AllXGaming";
+
+            // Version configuration - Edit this to add/update versions
+            const versionConfig = [
+                { time: "2025-05-10T00:00:00", url: "v2.html" },
+                { time: "2025-05-15T00:00:00", url: "v3.html" },
+                { time: "2025-06-01T00:00:00", url: "v4.html" },
+                { time: "2025-06-11T00:00:00", url: "v1.html" }
+            ].sort((a, b) => new Date(a.time) - new Date(b.time));
+
+            // Create brand name letters
+            brandText.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.animationDelay = `${0.20 + (index * 0.08)}s`;
+                brandNameContainer.appendChild(span);
+            });
+
+            // Get active version based on current date
+            function getActiveVersion() {
+                const currentTime = new Date();
+                let activeUrl = "default.html";
+                
+                versionConfig.forEach(version => {
+                    if (new Date(version.time) <= currentTime) {
+                        activeUrl = version.url;
+                    }
+                });
+                
+                return activeUrl;
+            }
+
+            // Animation timing
+            const lastLetterAnimationDelay = 0.92 * 1000;
+            const letterAnimationDuration = 0.7 * 1000;
+            const additionalDisplayTime = 1200;
+            const timeUntilFadeStart = lastLetterAnimationDelay + letterAnimationDuration + additionalDisplayTime;
+
+            // After animations complete
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+                
+                setTimeout(() => {
+                    window.location.href = getActiveVersion();
+                }, 800);
+                
+            }, timeUntilFadeStart);
+        });
+    </script>
+</body>
+</html>
